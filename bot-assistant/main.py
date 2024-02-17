@@ -199,7 +199,7 @@ class ContactBot:
                 name = user_input[16:]
                 return self.search_contacts(name)
             elif user_input == "search_by_bd":
-                 print(self.search_by_bd())
+                return self.search_by_bd()
             else:
                 return "Invalid command. Try again."
 
