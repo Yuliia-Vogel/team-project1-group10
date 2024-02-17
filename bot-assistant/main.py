@@ -181,3 +181,4 @@ if __name__ == "__main__":
     bot = ContactBot(address_book, note_book)
     while True:
         print(bot.main())
+        

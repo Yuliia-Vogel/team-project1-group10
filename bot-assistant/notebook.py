@@ -13,7 +13,6 @@ class Note:
     def __str__(self):
         return f"{self.creation_date}: {self.title} - {self.text}"
 
-
 class NoteBook(UserList):
     def __init__(self, filename):
         self.filename = filename
