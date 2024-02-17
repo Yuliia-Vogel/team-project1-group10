@@ -52,12 +52,6 @@ class Birthday(Field):
             except ValueError:
                 raise ValueError
 
-    def value_as_datetime(self):
-        if self.value:
-            if self.value.lower() == 'none':
-                return None
-            return datetime.strptime(self.value, '%Y-%m-%d')
-        return None
 
 class Email(Field):
     email_domains = [
@@ -113,9 +107,9 @@ class Record:
         if not self.birthday.value:
             return None
         today = datetime.today()
-        next_birthday = datetime(today.year, self.birthday.value_as_datetime().month, self.birthday.value_as_datetime().day)
+        next_birthday = datetime(today.year, self.birthday.value.month, self.birthday.value.day)
         if next_birthday < today:
-            next_birthday = datetime(today.year + 1, self.birthday.value_as_datetime().month, self.birthday.value_as_datetime().day)
+            next_birthday = datetime(today.year + 1, self.birthday.value.month, self.birthday.value.day)
         delta = next_birthday - today
         return delta.days
 
@@ -124,7 +118,6 @@ class Record:
         email_info = f"Email: {self.email}" if self.email.value else "Email: None"
         birthday_info = f"Birthday: {self.birthday}" if self.birthday.value else "Birthday: None"
         return f"Contact name: {self.name.value}, {phone_info}, {email_info}, {birthday_info}"
-
 
 
 class AddressBook(UserDict):
@@ -177,10 +170,6 @@ class AddressBook(UserDict):
                         if email_value.lower() == 'none':
                             email_value = None
                         record.email = Email(email_value)
-                        birthday_value = item['birthday']
-                        if birthday_value.lower() == 'none':
-                            birthday_value = None
-                        record.birthday = Birthday(birthday_value)
                         self.add_record(record)
         except FileNotFoundError:
             return "File not found. Creating a new address book."
