@@ -54,6 +54,25 @@ class ContactBot:
                     birthday_info = "None"
                 result += f"Contact name: {record.name.value}, Phones: {', '.join(record.phones)}, Email: {record.email}, Birthday: {birthday_info}\n"
             return result
+        
+    def search_by_bd(self):
+        upcoming_birthday_contacts = []
+        today = datetime.today()
+        for contact in self.address_book.data.values():
+            if contact.birthday.value_as_datetime():
+                next_birthday = datetime(today.year, contact.birthday.value_as_datetime().month, contact.birthday.value_as_datetime().day)
+                if next_birthday < today:
+                    next_birthday = datetime(today.year + 1, contact.birthday.value_as_datetime().month, contact.birthday.value_as_datetime().day)
+                days_to_birthday = (next_birthday - today).days
+                if 0 <= days_to_birthday <= 7:  
+                    upcoming_birthday_contacts.append((contact, days_to_birthday))
+        if not upcoming_birthday_contacts:
+            return "No contacts with upcoming birthdays."
+        else:
+            result = ""
+            for contact, days_left in upcoming_birthday_contacts:
+                result += f"Contact: {contact.name.value}, Days until birthday: {days_left}\n"
+            return result
 
     def add_birthday(self, data):
         try:
@@ -179,6 +198,8 @@ class ContactBot:
             elif user_input.startswith("search_contacts"):
                 name = user_input[16:]
                 return self.search_contacts(name)
+            elif user_input == "search_by_bd":
+                 print(self.search_by_bd())
             else:
                 return "Invalid command. Try again."
 

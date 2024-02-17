@@ -58,6 +58,7 @@ class Birthday(Field):
                 return None
             return datetime.strptime(self.value, '%Y-%m-%d')
         return None
+    
 
 class Email(Field):
     email_domains = [
