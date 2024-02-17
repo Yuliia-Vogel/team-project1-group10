@@ -46,12 +46,18 @@ class Birthday(Field):
         super().__init__(value)
 
     def _validate_birthday_format(self, value):
+        date_today = datetime.now().date()
         if value.lower() != 'none':
             try:
                 datetime.strptime(value, '%Y-%m-%d')
             except ValueError:
                 raise ValueError
-
+            if date_today < datetime.strptime(value, '%Y-%m-%d').date():
+                # print('BD date not ok')
+                raise ValueError
+            else:
+                # print('BD date is ok')
+                return True
     def value_as_datetime(self):
         if self.value:
             if self.value.lower() == 'none':
@@ -185,3 +191,7 @@ class AddressBook(UserDict):
                         self.add_record(record)
         except FileNotFoundError:
             return "File not found. Creating a new address book."
+
+
+# birthday1 = Birthday('2022-08-14')
+# print(birthday1)
