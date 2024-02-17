@@ -1,6 +1,8 @@
+import json
+import re
 from datetime import datetime
 from collections import UserDict
-import json
+
 
 class Field:
     def __init__(self, value):
@@ -37,7 +39,6 @@ class Phone(Field):
         super().__init__(value)
 
 
-
 class Birthday(Field):
     def __init__(self, value=None):
         if value:
@@ -45,24 +46,58 @@ class Birthday(Field):
         super().__init__(value)
 
     def _validate_birthday_format(self, value):
-        if value.lower() != 'none':  
+        if value.lower() != 'none':
             try:
                 datetime.strptime(value, '%Y-%m-%d')
             except ValueError:
                 raise ValueError
 
-    #def __str__(self):
-        #return str(self.value) if self.value else ""  
+    def value_as_datetime(self):
+        if self.value:
+            if self.value.lower() == 'none':
+                return None
+            return datetime.strptime(self.value, '%Y-%m-%d')
+        return None
+
+class Email(Field):
+    email_domains = [
+        'gmail.com',
+        'yahoo.com',
+        'outlook.com',
+        'hotmail.com',
+        'icloud.com',
+        'aol.com',
+        'yandex.com',
+        'zoho.com',
+        'protonmail.com',
+        'mail.com',
+        'gmx.com'
+    ]
+
+    def __init__(self, value):
+        super().__init__(value)
+
+    def is_valid(self, value):
+        if value is None:
+            return True
+        if isinstance(value, str):
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if re.match(email_regex, value):
+                local_part, domain_part = value.split('@')
+                if domain_part in self.email_domains and local_part != '':
+                    return True
+        return False
 
 
 class Record:
-    def __init__(self, name, birthday=None):
+    def __init__(self, name, birthday=None, email=None):
         self.name = Name(name)
         self.phones = []
         self.birthday = Birthday(birthday)
+        self.email = Email(email)
 
     def add_phone(self, phone):
-        self.phones.append(str(phone))  
+        self.phones.append(str(phone))
 
     def remove_phone(self, phone):
         self.phones.remove(phone)
@@ -78,15 +113,18 @@ class Record:
         if not self.birthday.value:
             return None
         today = datetime.today()
-        next_birthday = datetime(today.year, self.birthday.value.month, self.birthday.value.day)
+        next_birthday = datetime(today.year, self.birthday.value_as_datetime().month, self.birthday.value_as_datetime().day)
         if next_birthday < today:
-            next_birthday = datetime(today.year + 1, self.birthday.value.month, self.birthday.value.day)
+            next_birthday = datetime(today.year + 1, self.birthday.value_as_datetime().month, self.birthday.value_as_datetime().day)
         delta = next_birthday - today
         return delta.days
 
     def __str__(self):
-        birthday_info = f", Birthday: {self.birthday}" if self.birthday.value else ""
-        return f"Contact name: {self.name.value}, phones: {'; '.join(self.phones)}{birthday_info}"
+        phone_info = f"Phones: {', '.join(self.phones)}"
+        email_info = f"Email: {self.email}" if self.email.value else "Email: None"
+        birthday_info = f"Birthday: {self.birthday}" if self.birthday.value else "Birthday: None"
+        return f"Contact name: {self.name.value}, {phone_info}, {email_info}, {birthday_info}"
+
 
 
 class AddressBook(UserDict):
@@ -120,6 +158,7 @@ class AddressBook(UserDict):
         with open(self.filename, "w") as fh:
             json.dump([{"name": record.name.value,
                         "phones": record.phones,
+                        "email": str(record.email),
                         "birthday": str(record.birthday)} for record in self.data.values()], fh, indent=4)
 
     def load_from_json(self):
@@ -127,14 +166,21 @@ class AddressBook(UserDict):
             with open(self.filename, "r") as fh:
                 data = json.load(fh)
                 if not data:
-                    return("The JSON file is empty.")
+                    return "The JSON file is empty."
                 else:
                     self.data.clear()
                     for item in data:
                         record = Record(item['name'])
                         for phone in item['phones']:
                             record.add_phone(phone)
-                        record.birthday = Birthday(item['birthday'])
+                        email_value = item['email']
+                        if email_value.lower() == 'none':
+                            email_value = None
+                        record.email = Email(email_value)
+                        birthday_value = item['birthday']
+                        if birthday_value.lower() == 'none':
+                            birthday_value = None
+                        record.birthday = Birthday(birthday_value)
                         self.add_record(record)
         except FileNotFoundError:
-            return("File not found. Creating a new address book.")
+            return "File not found. Creating a new address book."
