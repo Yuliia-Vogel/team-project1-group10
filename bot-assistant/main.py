@@ -1,52 +1,72 @@
-from contacts import AddressBook, Record, Name, Phone, Birthday
+import sys
+from contacts import AddressBook, Record, Name, Phone, Birthday, Email
+from notebook import Note, NoteBook
 from datetime import datetime
 
+
+def exit_bot() -> None:
+    print("Good bye!")
+    sys.exit()
+
+
 class ContactBot:
-    def __init__(self, address_book):
+    def __init__(self, address_book, note_book):
         self.address_book = address_book
+        self.note_book = note_book
 
     @staticmethod
     def hello():
         return "How can I help you?"
 
-    def add(self, data):
+    def add_contact(self, data):
         try:
-            name, phone = data.split()
+            name, phone = data.split(maxsplit=1)
             record = Record(name)
             record.add_phone(Phone(phone))
             self.address_book.add_record(record)
             return f"Contact {name} added with phone {phone}"
         except ValueError:
             return "Invalid data format. Please provide both name and phone."
-        
-    def change(self, data):
+
+    def add_note(self, note):
+        self.note_book.add_note(Note(note))
+        return "Note added"
+
+    def change_contact_phone(self, data):
         try:
-            name, phone = data.split()
+            name, phone = data.split(maxsplit=1)
             record = self.address_book.find(name)
             if record:
-                record.phones.clear()  
-                record.add_phone(phone)  
+                record.phones.clear()
+                record.add_phone(Phone(phone))
                 return f"Phone number updated for {name}"
             else:
                 return "Contact not found"
         except ValueError:
             return "Invalid data format. Please provide both name and phone."
 
-
-    def phone(self, name):
-        record = self.address_book.find(name)
-        return record.phones if record else "Contact not found"
-
-    def show_all(self):
-        if not self.address_book:
+    def show_all_contacts(self):
+        if not self.address_book.data:
             return "No contacts available"
         else:
-            result = "\n".join(str(record) for record in self.address_book.data.values())
+            result = ""
+            for record in self.address_book.data.values():
+                birthday_info = ""
+                birthday_datetime = record.birthday.value_as_datetime()
+                if birthday_datetime:
+                    days_to_birthday = record.days_to_birthday()
+                    if days_to_birthday is None:
+                        birthday_info = "None"
+                    else:
+                        birthday_info = f"{days_to_birthday} days left"
+                else:
+                    birthday_info = "None"
+                result += f"Contact name: {record.name.value}, Phones: {', '.join(record.phones)}, Email: {record.email}, Birthday: {birthday_info}\n"
             return result
 
     def add_birthday(self, data):
         try:
-            name, birthday = data.split()
+            name, birthday = data.split(maxsplit=1)
             if name in self.address_book:
                 self.address_book[name].birthday = Birthday(birthday)
                 return f"Birthday added for {name}"
@@ -55,11 +75,25 @@ class ContactBot:
         except ValueError:
             return "Invalid data format. Please provide both name and birthday."
 
-    def delete(self, name):
+    def add_email(self, data):
+        try:
+            name, email = data.split(maxsplit=1)
+            if name and email:
+                if name in self.address_book:
+                    self.address_book[name].email = Email(email)
+                    return f"Email added for {name}"
+                else:
+                    return f"Contact with name {name} does not exist."
+            else:
+                return "Invalid data format. Please provide both name and email."
+        except ValueError:
+            return "Invalid data format. Please provide both name and email."
+
+    def delete_contact(self, name):
         self.address_book.delete(name)
         return f"Contact {name} deleted"
 
-    def search(self, name):
+    def search_contacts(self, name):
         found_records = [record for record in self.address_book.data.values() if name.lower() in record.name.value.lower() or any(name.lower() in phone.lower() for phone in record.phones)]
         if found_records:
             return "\n".join(str(record) for record in found_records)
@@ -70,38 +104,41 @@ class ContactBot:
         while True:
             user_input = input("Enter command: ").lower()
             if user_input in ["good bye", "close", "exit", "."]:
-                result = "Good bye!"
                 self.address_book.save_to_json()
-                return result
+                self.note_book.save_to_json()
+                return exit_bot()
             elif user_input.startswith("add_birthday"):
                 data = user_input[len("add_birthday")+1:]
                 return self.add_birthday(data)
+            elif user_input.startswith("add_email"):
+                data = user_input[len("add_email")+1:]
+                return self.add_email(data)
             elif user_input == "hello":
                 return self.hello()
-            elif user_input.startswith("add"):
-                data = user_input[4:]
-                return self.add(data)
-            elif user_input.startswith("change"):
-                data = user_input[7:]
-                return self.change(data)
-            elif user_input.startswith("phone"):
-                name = user_input[6:]
-                return self.phone(name)
+            elif user_input.startswith("add_contact"):
+                data = user_input[11:]
+                return self.add_contact(data)
+            elif user_input.startswith("add_note"):
+                data = user_input[8:]
+                return self.add_note(data)
+            elif user_input.startswith("change_contact_phone"):
+                data = user_input[len("change_contact_phone")+1:]
+                return self.change_contact_phone(data)
             elif user_input == "show all":
-                return self.show_all()
-            elif user_input.startswith("delete"):
-                name = user_input[7:]
-                return self.delete(name)
-            elif user_input.startswith("search"):
-                name = user_input.split(" ", 1)[1]
-                return self.search(name)
+                return self.show_all_contacts()
+            elif user_input.startswith("delete_contact"):
+                name = user_input[14:]
+                return self.delete_contact(name)
+            elif user_input.startswith("search_contacts"):
+                name = user_input[16:]
+                return self.search_contacts(name)
             else:
                 return "Invalid command. Try again."
 
 
 if __name__ == "__main__":
     address_book = AddressBook("address_book.json")
-    bot = ContactBot(address_book)
+    note_book = NoteBook("notes.json")
+    bot = ContactBot(address_book, note_book)
     while True:
         print(bot.main())
-
