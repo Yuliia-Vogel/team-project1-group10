@@ -36,3 +36,4 @@ class NoteBook(UserList):
                     self.data.append(Note(note['title'], note['text'], ','.join(note['tags'])))
         except FileNotFoundError:
             return "File not found. Creating a new note book."
+
