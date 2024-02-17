@@ -4,11 +4,6 @@ from notebook import Note, NoteBook
 from datetime import datetime
 
 
-def exit_bot() -> None:
-    print("Good bye!")
-    sys.exit()
-
-
 class ContactBot:
     def __init__(self, address_book, note_book):
         self.address_book = address_book
@@ -27,10 +22,6 @@ class ContactBot:
             return f"Contact {name} added with phone {phone}"
         except ValueError:
             return "Invalid data format. Please provide both name and phone."
-
-    def add_note(self, note):
-        self.note_book.add_note(Note(note))
-        return "Note added"
 
     def change_contact_phone(self, data):
         try:
@@ -89,6 +80,48 @@ class ContactBot:
         except ValueError:
             return "Invalid data format. Please provide both name and email."
 
+    def add_note(self):
+        title = input("Введіть назву нотатки: ")
+        text = input("Введіть зміст нотатки: ")
+        tags = input("Введіть теги, розділені комою: ")
+        new_note = Note(title, text, tags)  # Створення нової нотатки з усіма необхідними аргументами
+        self.note_book.add_note(new_note)  # Додавання нової нотатки до нотатника
+        return "Note added"
+
+    def search_note(self, keyword):
+        return [note for note in self.notes if keyword.lower() in note.content.lower()]
+
+    def edit_note(self, id, new_content):
+        for note in self.notes:
+            if note.id == id:
+                note.content = new_content
+                return "Note updated"
+        return "Note not found"
+
+    def remove_note(self, id):
+        for note in self.notes:
+            if note.id == id:
+                self.notes.remove(note)
+                return "Note removed"
+        return "Note not found"
+
+    def show_note(self):
+        if not self.note_book:
+            return "No notes available"
+        else:
+            return '\n'.join(str(note) for note in self.note_book)
+
+    def help_note(self):
+        commands = {
+            "add_note": "Add a new note. Usage: add_note your note here",
+            "search_note": "Search notes by keyword. Usage: search_note keyword",
+            "edit_note": "Edit an existing note. Usage: edit_note id new content",
+            "remove_note": "Remove a note. Usage: remove_note id",
+            "show_note": "Show all notes.",
+            "help_note": "Show this help message."
+        }
+        return '\n'.join([f"{cmd}: {desc}" for cmd, desc in commands.items()])
+
     def delete_contact(self, name):
         self.address_book.delete(name)
         return f"Contact {name} deleted"
@@ -118,9 +151,23 @@ class ContactBot:
             elif user_input.startswith("add_contact"):
                 data = user_input[11:]
                 return self.add_contact(data)
-            elif user_input.startswith("add_note"):
-                data = user_input[8:]
-                return self.add_note(data)
+
+            elif user_input.startswith("add_note"):  # + Додає нотатку до нотатника. 
+                return self.add_note()
+            elif user_input.startswith("search_note"): # - Шукає нотатки за певними ключовими словами.
+                data = user_input[11:]
+                return self.search_note(data)
+            elif user_input.startswith("edit_note"): # - Редагує існуючу нотатку.
+                data = user_input[9:]
+                return self.edit_note(data)
+            elif user_input.startswith("remove_note"): # - Видаляє нотатку.
+                data = user_input[11:]
+                return self.remove_note(data)
+            elif user_input.startswith("show_note"): # + Виводить список всіх нотаток.
+                return self.show_note()
+            elif user_input.startswith("help_note"): # + Виводить список доступних команд для нотатника.
+                return self.help_note()
+            
             elif user_input.startswith("change_contact_phone"):
                 data = user_input[len("change_contact_phone")+1:]
                 return self.change_contact_phone(data)
@@ -134,6 +181,11 @@ class ContactBot:
                 return self.search_contacts(name)
             else:
                 return "Invalid command. Try again."
+
+
+def exit_bot() -> None:
+    print("Good bye!")
+    sys.exit()
 
 
 if __name__ == "__main__":

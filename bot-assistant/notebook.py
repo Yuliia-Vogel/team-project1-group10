@@ -4,12 +4,14 @@ from collections import UserList
 
 
 class Note:
-    def __init__(self, text):
-        self.text = text
-        self.creation_date = datetime.now()
+    def __init__(self, title, text, tags):
+        self.title = title                  # Назва
+        self.text = text                    # Зміст
+        self.tags = tags.split(",")         # Теги
+        self.creation_date = datetime.now() # сьогоднішня дата
 
     def __str__(self):
-        return f"{self.creation_date}: {self.text}"
+        return f"{self.creation_date}: {self.title} - {self.text}"
 
 
 class NoteBook(UserList):
@@ -19,7 +21,7 @@ class NoteBook(UserList):
         self.load_from_json()
 
     def add_note(self, note):
-        self.data.append(note)
+        self.append(note)
 
     def save_to_json(self):
         with open(self.filename, "w") as fh:
