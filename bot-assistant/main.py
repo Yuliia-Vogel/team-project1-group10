@@ -140,6 +140,7 @@ class ContactBot:
                 return self.add_contact(data)
             elif user_input.startswith("add_note"):  # + Додає нотатку до нотатника. 
                 return self.add_note()
+
             elif user_input.startswith("search_note"): # - Шукає нотатки за певними ключовими словами.
                 data = user_input[11:]
                 return self.search_note(data)
@@ -153,7 +154,7 @@ class ContactBot:
                 return self.show_note()
             elif user_input.startswith("help_note"): # + Виводить список доступних команд для нотатника.
                 return self.help_note()
-
+            
             elif user_input.startswith("change_contact_phone"):
                 data = user_input[len("change_contact_phone")+1:]
                 return self.change_contact_phone(data)
