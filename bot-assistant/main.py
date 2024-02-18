@@ -100,11 +100,11 @@ class ContactBot:
             return "Invalid data format. Please provide both name and email."
 
     def add_note(self):
-        title = input("Введіть назву нотатки: ")
-        text = input("Введіть зміст нотатки: ")
-        tags = input("Введіть теги, розділені комою: ")
-        new_note = Note(title, text, tags)  # Створення нової нотатки з усіма необхідними аргументами
-        self.note_book.add_note(new_note)  # Додавання нової нотатки до нотатника
+        title = input("Enter the title of the note:  ")
+        text = input("Enter the content of the note: ")
+        tags = input("Enter tags, separated by commas: ")
+        new_note = Note(title, text, tags)                                          # Створення нової нотатки з усіма необхідними аргументами
+        self.note_book.add_note(new_note)                                           # Додавання нової нотатки до нотатника
         return "Note added"
 
     def search_note(self, keyword): 
@@ -112,17 +112,13 @@ class ContactBot:
 
     def edit_note(self, note_title, new_content):  # Пошук та редагування нотатки за назвою
         for note in self.note_book.data:
-            if note.title == note_title:  # Порівнюємо назву нотатки з вказаною
-                note.text = new_content  # Оновлюємо текст нотатки на новий зміст
+            if note.title == note_title:                                            # Порівнюємо назву нотатки з вказаною
+                note.text = new_content                                             # Оновлюємо текст нотатки на новий зміст
                 return "Note updated successfully."
         return "Note not found."
 
-    def remove_note(self, id):
-        for note in self.notes:
-            if note.id == id:
-                self.notes.remove(note)
-                return "Note removed"
-        return "Note not found"
+    def remove_note(self, note_title):
+        pass
 
     def show_note(self):
         if not self.note_book.data:
@@ -170,30 +166,34 @@ class ContactBot:
             elif user_input.startswith("add_contact"):
                 data = user_input[11:]
                 return self.add_contact(data)
-
             elif user_input.startswith("add_note"):  # + Додає нотатку до нотатника. 
                 return self.add_note()
             elif user_input.startswith("search_note"):  # + Шукає нотатки за певними ключовими словами і сортує від новішого до старішого до даті.
-                search_query = user_input[len("search_note"):].strip()  # Отримуємо пошуковий запит, видаляючи команду та пробіли на початку та в кінці
+                search_query = user_input[len("search_note"):].strip()                                              # Отримуємо пошуковий запит, видаляючи команду та пробіли на початку та в кінці
                 found_notes = note_book.search_note(search_query)
                 for note in found_notes:
-                    print(note)  # Виводимо інформацію про кожну знайдену нотатку
+                    return note                                                                                     # Виводимо інформацію про кожну знайдену нотатку
             elif user_input.startswith("edit_note"):   # + Редагує існуючу нотатку. edit_note "назва рецепту" "новий зміст рецепту" 
-                command, *args = user_input.split()  # Розділяємо введену команду на частини
-                if len(args) >= 2:  # Переконуємося, що користувач ввів ідентифікатор та новий зміст
-                    note_id = args[0]  # Перше слово після команди - ідентифікатор нотатки
-                    new_content = " ".join(args[1:])  # Все інше - новий зміст нотатки
+                command, *args = user_input.split()                                                                 # Розділяємо введену команду на частини
+                if len(args) >= 2:                                                                                  # Переконуємося, що користувач ввів ідентифікатор та новий зміст
+                    note_id = args[0]                                                                               # Перше слово після команди - ідентифікатор нотатки
+                    new_content = " ".join(args[1:])                                                                # Все інше - новий зміст нотатки
                     return self.edit_note(note_id, new_content)
                 else:
                     return "Please, provide both an ID and new content for the note."
-            elif user_input.startswith("remove_note"):  # - Видаляє нотатку.
-                data = user_input[11:]
+            elif user_input.startswith("remove_note"):  # + Видаляє нотаток.
+                note_title = user_input[11:].strip()                                                                # Витягуємо назву нотатки і видаляємо зайві пробіли
+                if self.note_book.remove_note_by_title(note_title):
+                    return "Note removed successfully."
+                else:
+                    return "Note not found."
+            elif user_input.startswith("remove_note"):
+                data = user_input[11:].strip()                                                                      # Видаляємо команду та зайві пробіли
                 return self.remove_note(data)
             elif user_input.startswith("show_note"):  # + Виводить список всіх нотаток.
                 return self.show_note()
             elif user_input.startswith("help_note"):  # + Виводить список доступних команд для нотатника.
                 return self.help_note()
-
             elif user_input.startswith("change_contact_phone"):
                 data = user_input[len("change_contact_phone")+1:]
                 return self.change_contact_phone(data)
