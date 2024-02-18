@@ -26,6 +26,7 @@ COMMANDS = [
     "search_by_bd",
     "add_birthday",
     "add_email",
+    "add_phone",
     "add_note",
     "search_note",
     "edit_note",
@@ -85,6 +86,22 @@ class ContactBot:
         except ValueError:
             return "Invalid data format. Please provide both name and phone."
 
+    def add_phone(self, data):
+        try:
+            name, phone = data.split(maxsplit=1)
+            if name and phone:  # Ensure both name and phone are provided
+                record = self.address_book.find(name)
+                if record:
+                    record.add_phone(Phone(phone))
+                    self.address_book.save_to_json()  # Save changes to JSON file
+                    return f"Phone number {phone} added for {name}"
+                else:
+                    return f"Contact '{name}' not found"
+            else:
+                return "Invalid data format. Please provide both name and phone number."
+        except ValueError as e:
+            return f"Error: {e}"
+
     # вивід всіх контактів
     def show_all_contacts(self):
         if not self.address_book.data:
@@ -92,17 +109,12 @@ class ContactBot:
         else:
             result = ""
             for record in self.address_book.data.values():
-                birthday_info = ""
-                birthday_datetime = record.birthday.value_as_datetime()
-                if birthday_datetime:
-                    days_to_birthday = record.days_to_birthday()
-                    if days_to_birthday is None:
-                        birthday_info = "None"
-                    else:
-                        birthday_info = f"{days_to_birthday} days left"
-                else:
-                    birthday_info = "None"
-                result += f"Contact name: {record.name.value}, Phones: {', '.join(record.phones)}, Email: {record.email}, Birthday: {birthday_info}\n"
+                contact_info = f"Contact name: {record.name.value}, Phones: {', '.join(record.phones)}"
+                if record.birthday.value:
+                    contact_info += f", Birthday: {record.birthday}"
+                if record.email.value:
+                    contact_info += f", Email: {record.email}"
+                result += contact_info + "\n"
             return result
 
     # пошук контактів з днем народження в межах 14 днів
@@ -223,6 +235,9 @@ class ContactBot:
             elif user_input.startswith("add_contact"):
                 data = user_input[11:]
                 return self.add_contact(data)
+            elif user_input.startswith('add_phone'): # додає телефон до списку телефонів контакту. Як працюєЖ пишемо add_phone name
+                data = user_input[len('add_phone')+1:]
+                return self.add_phone(data)
             elif user_input.startswith("add_note"):  # + Додає нотатку до нотатника. 
                 return self.add_note()
             elif user_input.startswith("search_note"):  # + Шукає нотатки за певними ключовими словами і сортує від новішого до старішого до даті.
@@ -254,7 +269,7 @@ class ContactBot:
             elif user_input.startswith("change_contact_phone"):
                 data = user_input[len("change_contact_phone")+1:]
                 return self.change_contact_phone(data)
-            elif user_input == "show all":
+            elif user_input == "show_all_contacts":
                 return self.show_all_contacts()
             elif user_input.startswith("delete_contact"):
                 name = user_input[14:]
