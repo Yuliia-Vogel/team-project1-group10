@@ -27,6 +27,13 @@ class NoteBook(UserList):
         with open(self.filename, "w") as fh:
             json.dump([{"title": note.title, "text": note.text, "tags": note.tags, "creation_date": str(note.creation_date)} for note in self.data], fh, indent=4)
 
+    def remove_note_by_title(self, title):
+        for i, note in enumerate(self.data):
+            if note.title == title:
+                del self.data[i]
+                return True
+        return False
+
     def search_note(self, search_query):
         search_terms = search_query.lower().split()  # Розбиваємо пошуковий запит на слова
         found_notes = []
