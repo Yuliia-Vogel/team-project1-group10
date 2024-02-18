@@ -2,6 +2,52 @@ import sys
 from contacts import AddressBook, Record, Name, Phone, Birthday, Email
 from notebook import Note, NoteBook
 from datetime import datetime
+from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import WordCompleter, Completer, Completion
+from prompt_toolkit.document import Document
+
+
+class ConditionalCompleter(Completer):
+    def __init__(self, completer, condition):
+        self.completer = completer
+        self.condition = condition
+
+    def get_completions(self, document, complete_event):
+        if self.condition(document):
+            yield from self.completer.get_completions(document, complete_event)
+
+
+# Список команд для автодополнения
+COMMANDS = [
+    "add_contact",
+    "change_contact_phone",
+    "show_all_contacts",
+    "search_by_bd",
+    "add_birthday",
+    "add_email",
+    "add_note",
+    "search_note",
+    "edit_note",
+    "remove_not",
+    "show_note",
+    "help_note",
+    "delete_contact",
+    "search_contacts",
+]
+command_completer = WordCompleter(COMMANDS, ignore_case=True)
+
+
+# Функция-условие, определяющая, когда активировать автодополнение
+def completion_condition(document: Document):
+    text_before_cursor = document.text_before_cursor
+    return not text_before_cursor.strip().endswith(" ")
+
+
+# Создание кастомного автодополнителя с условием
+conditional_completer = ConditionalCompleter(command_completer, completion_condition)
+
+# Создание сессии с автодополнением
+session = PromptSession(completer=conditional_completer)
 
 
 class ContactBot:
@@ -150,7 +196,8 @@ class ContactBot:
 
     def main(self):
         while True:
-            user_input = input("Enter command: ").lower()
+            user_input = session.prompt("> ")
+            #user_input = input("Enter command: ").lower()
             if user_input in ["good bye", "close", "exit", "."]:
                 self.address_book.save_to_json()
                 self.note_book.save_to_json()
