@@ -60,7 +60,8 @@ class ContactBot:
     def hello():
         return "How can I help you?"
 
-    def add_contact(self, data):
+    # додавання контакту
+    def add_contact(self, data):                         
         try:
             name, phone = data.split(maxsplit=1)
             record = Record(name)
@@ -70,6 +71,7 @@ class ContactBot:
         except ValueError:
             return "Invalid data format. Please provide both name and phone."
 
+    # зміна номера телефону контакту
     def change_contact_phone(self, data):
         try:
             name, phone = data.split(maxsplit=1)
@@ -83,6 +85,7 @@ class ContactBot:
         except ValueError:
             return "Invalid data format. Please provide both name and phone."
 
+    # вивід всіх контактів
     def show_all_contacts(self):
         if not self.address_book.data:
             return "No contacts available"
@@ -102,6 +105,7 @@ class ContactBot:
                 result += f"Contact name: {record.name.value}, Phones: {', '.join(record.phones)}, Email: {record.email}, Birthday: {birthday_info}\n"
             return result
 
+    # пошук контактів з днем народження в межах 14 днів
     def search_by_bd(self):
         upcoming_birthday_contacts = []
         today = datetime.today()
@@ -111,16 +115,17 @@ class ContactBot:
                 if next_birthday < today:
                     next_birthday = datetime(today.year + 1, contact.birthday.value_as_datetime().month, contact.birthday.value_as_datetime().day)
                 days_to_birthday = (next_birthday - today).days
-                if 0 <= days_to_birthday <= 7:  
+                if 0 <= days_to_birthday <= 14:  
                     upcoming_birthday_contacts.append((contact, days_to_birthday))
         if not upcoming_birthday_contacts:
             return "No contacts with upcoming birthdays."
         else:
             result = ""
             for contact, days_left in upcoming_birthday_contacts:
-                result += f"Contact: {contact.name.value}, Days until birthday: {days_left}\n"
+                result += f"Contact: {contact.name.value.capitalize()}, Days until birthday: {days_left} ({contact.birthday})\n"  # Змінено
             return result
 
+    # додавання дня народження контакту
     def add_birthday(self, data):
         try:
             name, birthday = data.split(maxsplit=1)
@@ -132,6 +137,7 @@ class ContactBot:
         except ValueError:
             return "Invalid data format. Please provide both name and birthday."
 
+    # додавання електронної адреси контакту
     def add_email(self, data):
         try:
             name, email = data.split(maxsplit=1)
@@ -173,6 +179,7 @@ class ContactBot:
         else:
             return '\n'.join(str(note) for note in self.note_book.data)
 
+    #надання користувачу довідки щодо доступних команд для роботи з нотатками
     def help_note(self):
         commands = {
             "add_note": "Add a new note. Usage: add_note your note here",
@@ -184,10 +191,12 @@ class ContactBot:
         }
         return '\n'.join([f"{cmd}: {desc}" for cmd, desc in commands.items()])
 
+    #Видалення контакту 
     def delete_contact(self, name):
         self.address_book.delete(name)
         return f"Contact {name} deleted"
 
+    #Пошук контакту 
     def search_contacts(self, name):
         found_records = [record for record in self.address_book.data.values() if name.lower() in record.name.value.lower() or any(name.lower() in phone.lower() for phone in record.phones)]
         if found_records:
