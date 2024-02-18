@@ -19,6 +19,7 @@ class ConditionalCompleter(Completer):
 
 # Список команд для автодополнения
 COMMANDS = [
+    "exit",
     "add_contact",
     "change_contact_phone",
     "show_all_contacts",
