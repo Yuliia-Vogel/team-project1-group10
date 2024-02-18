@@ -53,10 +53,8 @@ class Birthday(Field):
             except ValueError:
                 raise ValueError
             if date_today < datetime.strptime(value, '%Y-%m-%d').date():
-                # print('BD date not ok')
                 raise ValueError
             else:
-                # print('BD date is ok')
                 return True
     def value_as_datetime(self):
         if self.value:
@@ -67,19 +65,6 @@ class Birthday(Field):
     
 
 class Email(Field):
-    email_domains = [
-        'gmail.com',
-        'yahoo.com',
-        'outlook.com',
-        'hotmail.com',
-        'icloud.com',
-        'aol.com',
-        'yandex.com',
-        'zoho.com',
-        'protonmail.com',
-        'mail.com',
-        'gmx.com'
-    ]
 
     def __init__(self, value):
         super().__init__(value)
@@ -90,11 +75,8 @@ class Email(Field):
         if isinstance(value, str):
             email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
             if re.match(email_regex, value):
-                local_part, domain_part = value.split('@')
-                if domain_part in self.email_domains and local_part != '':
-                    return True
+                return True
         return False
-
 
 class Record:
     def __init__(self, name, birthday=None, email=None):
@@ -191,6 +173,3 @@ class AddressBook(UserDict):
         except FileNotFoundError:
             return "File not found. Creating a new address book."
 
-
-# birthday1 = Birthday('2022-08-14')
-# print(birthday1)
