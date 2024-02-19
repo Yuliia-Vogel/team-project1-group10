@@ -1,6 +1,6 @@
 import sys
-from contacts import AddressBook, Record, Name, Phone, Birthday, Email
-from notebook import Note, NoteBook
+from bot_assistant.contacts import AddressBook, Record, Name, Phone, Birthday, Email
+from bot_assistant.notebook import Note, NoteBook
 from datetime import datetime
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
@@ -313,9 +313,7 @@ class ContactBot:
                 else:
                     return "Please, provide both an ID and new content for the note."
             elif user_input.startswith("remove_note"):  # + Видаляє нотаток.
-                note_title = user_input[
-                    11:
-                ].strip()  # Витягуємо назву нотатки і видаляємо зайві пробіли
+                note_title = user_input[len("remove_note") + 1 :].strip()  # Витягуємо назву нотатки і видаляємо зайві пробіли
                 if self.note_book.remove_note_by_title(note_title):
                     return "Note removed successfully."
                 else:
