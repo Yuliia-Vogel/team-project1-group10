@@ -320,9 +320,6 @@ class ContactBot:
                     return "Note removed successfully."
                 else:
                     return "Note not found."
-            elif user_input.startswith("remove_note"):
-                data = user_input[len("remove_note") + 1 :].strip()  # Видаляємо команду та зайві пробіли
-                return self.remove_note(data)
             elif user_input.startswith("show_note"):  # + Виводить список всіх нотаток.
                 return self.show_note()
             elif user_input.startswith("help"):  # + Виводить список доступних всех команд.
