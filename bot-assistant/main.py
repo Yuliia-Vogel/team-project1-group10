@@ -39,7 +39,7 @@ COMMANDS = [
     "add_note",
     "search_note",
     "edit_note",
-    "remove_not",
+    "remove_note",
     "show_note",
     "help_note",
     "delete_contact",
@@ -63,7 +63,7 @@ class ContactBot:
     # додавання контакту
     def add_contact(self, data):
         try:
-            name, phone = data.split(maxsplit=1)
+            name, phone = data.rsplit(maxsplit=1)
             record = Record(name)
             record.add_phone(Phone(phone))
             self.address_book.add_record(record)
@@ -193,9 +193,6 @@ class ContactBot:
                 return "Note updated successfully."
         return "Note not found."
 
-    def remove_note(self, note_title):
-        pass
-
     def show_note(self):
         if not self.note_book.data:
             return "No notes available"
@@ -238,8 +235,8 @@ class ContactBot:
     def main(self):
         while True:
             command_completer.reset()
-            user_input = session.prompt("Enter command:  ").lower()
-            # user_input = input("Enter command: ").lower()
+            user_input_original = session.prompt("Enter command:  ")
+            user_input = user_input_original.lower()
             if user_input in ["good bye", "close", "exit", "."]:
                 self.address_book.save_to_json()
                 self.note_book.save_to_json()
@@ -253,7 +250,7 @@ class ContactBot:
             elif user_input == "hello":
                 return self.hello()
             elif user_input.startswith("add_contact"):
-                data = user_input[11:]
+                data = user_input_original[len("add_contact") + 1 :]
                 return self.add_contact(data)
             elif user_input.startswith(
                 "add_phone"
@@ -296,7 +293,7 @@ class ContactBot:
                 else:
                     return "Note not found."
             elif user_input.startswith("remove_note"):
-                data = user_input[11:].strip()  # Видаляємо команду та зайві пробіли
+                data = user_input[len("remove_note") + 1 :].strip()  # Видаляємо команду та зайві пробіли
                 return self.remove_note(data)
             elif user_input.startswith("show_note"):  # + Виводить список всіх нотаток.
                 return self.show_note()
@@ -310,10 +307,10 @@ class ContactBot:
             elif user_input == "show_all_contacts":
                 return self.show_all_contacts()
             elif user_input.startswith("delete_contact"):
-                name = user_input[len("delete_contact")+1:]
+                name = user_input[len("delete_contact") + 1 :]
                 return self.delete_contact(name)
             elif user_input.startswith("search_contacts"):
-                name = user_input[16:]
+                name = user_input[len("search_contacts") + 1 :]
                 return self.search_contacts(name)
             elif user_input == "search_by_bd":
                 return self.search_by_bd()
@@ -333,4 +330,3 @@ if __name__ == "__main__":
     bot = ContactBot(address_book, note_book)
     while True:
         print(bot.main())
-    # bot.delete_contact('Anna')
