@@ -75,7 +75,7 @@ class ContactBot:
     # зміна номера телефону контакту
     def change_contact_phone(self, data):
         try:
-            name, phone = data.split(maxsplit=1)
+            name, phone = data.rsplit(maxsplit=1)
             record = self.address_book.find(name)
             if record:
                 record.phones.clear()
@@ -88,7 +88,7 @@ class ContactBot:
 
     def add_phone(self, data):
         try:
-            name, phone = data.split(maxsplit=1)
+            name, phone = data.rsplit(maxsplit=1)
             if name and phone:  # Ensure both name and phone are provided
                 record = self.address_book.find(name)
                 if record:
@@ -148,7 +148,7 @@ class ContactBot:
     # додавання дня народження контакту
     def add_birthday(self, data):
         try:
-            name, birthday = data.split(maxsplit=1)
+            name, birthday = data.rsplit(maxsplit=1)
             if name in self.address_book:
                 self.address_book[name].birthday = Birthday(birthday)
                 return f"Birthday added for {name}"
@@ -160,7 +160,7 @@ class ContactBot:
     # додавання електронної адреси контакту
     def add_email(self, data):
         try:
-            name, email = data.split(maxsplit=1)
+            name, email = data.rsplit(maxsplit=1)
             if name and email:
                 if name in self.address_book:
                     self.address_book[name].email = Email(email)
@@ -270,10 +270,10 @@ class ContactBot:
                 self.note_book.save_to_json()
                 return exit_bot()
             elif user_input.startswith("add_birthday"):
-                data = user_input[len("add_birthday") + 1 :]
+                data = user_input_original[len("add_birthday") + 1 :]
                 return self.add_birthday(data)
             elif user_input.startswith("add_email"):
-                data = user_input[len("add_email") + 1 :]
+                data = user_input_original[len("add_email") + 1 :]
                 return self.add_email(data)
             elif user_input == "hello":
                 return self.hello()
@@ -283,7 +283,7 @@ class ContactBot:
             elif user_input.startswith(
                 "add_phone"
             ):  # додає телефон до списку телефонів контакту. Як працюєЖ пишемо add_phone name
-                data = user_input[len("add_phone") + 1 :]
+                data = user_input_original[len("add_phone") + 1 :]
                 return self.add_phone(data)
             elif user_input.startswith("add_note"):  # + Додає нотатку до нотатника.
                 return self.add_note()
@@ -330,12 +330,12 @@ class ContactBot:
             elif user_input.startswith("help_note"):  # + Виводить список доступних команд для нотатника.
                 return self.help_note()
             elif user_input.startswith("change_contact_phone"):
-                data = user_input[len("change_contact_phone") + 1 :]
+                data = user_input_original[len("change_contact_phone") + 1 :]
                 return self.change_contact_phone(data)
             elif user_input == "show_all_contacts":
                 return self.show_all_contacts()
             elif user_input.startswith("delete_contact"):
-                name = user_input[len("delete_contact") + 1 :]
+                name = user_input_original[len("delete_contact") + 1 :]
                 return self.delete_contact(name)
             elif user_input.startswith("search_contacts"):
                 name = user_input[len("search_contacts") + 1 :]
