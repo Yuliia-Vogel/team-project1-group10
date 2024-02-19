@@ -194,9 +194,6 @@ class ContactBot:
                 return "Note updated successfully."
         return "Note not found."
 
-    def remove_note(self, note_title):
-        pass
-
     def show_note(self):
         if not self.note_book.data:
             return "No notes available"
