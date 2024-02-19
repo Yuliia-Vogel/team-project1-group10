@@ -28,6 +28,7 @@ class SingleUseCompleter(Completer):
 
 # Список команд для автодополнения
 COMMANDS = [
+    "help",
     "exit",
     "add_contact",
     "change_contact_phone",
@@ -200,6 +201,33 @@ class ContactBot:
             return "\n".join(str(note) for note in self.note_book.data)
 
     # надання користувачу довідки щодо доступних команд для роботи з нотатками
+
+    def help(self):
+        commands_help = {
+            "hello": "Displays a greeting message and offers assistance.",
+            "add_contact": "<name> <phone>: Adds a new contact.",
+            "change_contact_phone": "<name> <new phone>: Updates the phone number of a contact.",
+            "add_phone": "<name> <phone>: Adds an additional phone number to an existing contact.",
+            "show_all_contacts": "Displays all contacts.",
+            "search_by_bd": "Searches for contacts whose birthday is within the next 14 days.",
+            "add_birthday": "<name> <birthday>: Adds a birthday to a contact.",
+            "add_email": "<name> <email>: Adds an email to a contact.",
+            "add_note": "Adds a new note.",
+            "search_note": "<keyword>: Searches for notes by keyword.",
+            "edit_note": "<note title> <new content>: Edits the content of a note.",
+            "remove_note": "<note title>: Removes a note.",
+            "show_note": "Displays all notes.",
+            "help_note": "Displays help message for note commands.",
+            "delete_contact": "<name>: Deletes a contact.",
+            "search_contacts": "<name or phone>: Searches contacts by name or phone.",
+        }
+  
+        max_command_length = max(len(command) for command in commands_help.keys())
+        formatted_help = [f"{command.ljust(max_command_length)} : {description}" for command, description in commands_help.items()]
+        # Выводим отформатированный список команд
+        for line in formatted_help:
+            return "\n".join([f"{cmd}: {desc}" for cmd, desc in commands_help.items()])
+
     def help_note(self):
         commands = {
             "add_note": "Add a new note. Usage: add_note your note here",
@@ -297,9 +325,9 @@ class ContactBot:
                 return self.remove_note(data)
             elif user_input.startswith("show_note"):  # + Виводить список всіх нотаток.
                 return self.show_note()
-            elif user_input.startswith(
-                "help_note"
-            ):  # + Виводить список доступних команд для нотатника.
+            elif user_input.startswith("help"):  # + Виводить список доступних всех команд.
+                return self.help()            
+            elif user_input.startswith("help_note"):  # + Виводить список доступних команд для нотатника.
                 return self.help_note()
             elif user_input.startswith("change_contact_phone"):
                 data = user_input_original[len("change_contact_phone") + 1 :]
