@@ -244,8 +244,11 @@ class ContactBot:
 
     # Видалення контакту
     def delete_contact(self, name):
-        self.address_book.delete(name)
-        return f"Contact {name} deleted"
+        try: 
+            self.address_book.delete(name)
+            return f"Contact {name} deletetion fuction finished"
+        except ValueError:
+            return "Invalid data format. Please provide both name and phone."
 
     # Пошук контакту
     def search_contacts(self, name):
@@ -335,7 +338,7 @@ class ContactBot:
             elif user_input == "show_all_contacts":
                 return self.show_all_contacts()
             elif user_input.startswith("delete_contact"):
-                name = user_input[14:]
+                name = user_input[len("delete_contact")+1:]
                 return self.delete_contact(name)
             elif user_input.startswith("search_contacts"):
                 name = user_input[16:]
@@ -358,3 +361,4 @@ if __name__ == "__main__":
     bot = ContactBot(address_book, note_book)
     while True:
         print(bot.main())
+    # bot.delete_contact('Anna')

@@ -128,8 +128,14 @@ class AddressBook(UserDict):
         return self.data.get(name)
 
     def delete(self, name):
-        if name in self.data:
-            del self.data[name]
+        if len(name) <= 1:
+            raise ValueError
+        stripped_name = name.strip()
+        if stripped_name in self.data:
+            del self.data[stripped_name]
+            print(f"Contact {stripped_name} deleted")
+        else:
+            print('no data found')
 
     def __iter__(self):
         return self.iterator()
