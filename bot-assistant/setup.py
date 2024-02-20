@@ -1,6 +1,6 @@
 from setuptools import setup
 
-setup (name='bot_assistant',
+setup(name='bot_assistant',
       version='1.0.0',
       description='Bot for addressbook and notes creation and usage',
       url='https://github.com/Yuliia-Vogel/team-project1-group10',
@@ -10,9 +10,9 @@ setup (name='bot_assistant',
       packages=['bot_assistant'],
       install_requires=['prompt_toolkit>=3.0.43'],
       include_package_data=True,
-      entry_points={
-    'console_scripts': [
-        'bot_assistant = bot_assistant.main:main'
-    ]
-}
-)
+      entry_points = {
+          'console_scripts': [
+              'bot_assistant = bot_assistant.main:main'
+          ]
+      }
+      )
