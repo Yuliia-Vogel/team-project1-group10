@@ -5,12 +5,14 @@ from datetime import datetime
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
+from .file_sorter import FileSorter
 
 
 class SingleUseCompleter(Completer):
     def __init__(self, words):
         self.words = words
         self.used = False  # Флаг, указывающий на то, использовались ли подсказки
+
 
     def get_completions(self, document: Document, complete_event):
         # Проверяем, были ли уже использованы подсказки
@@ -56,6 +58,7 @@ class ContactBot:
     def __init__(self, address_book, note_book):
         self.address_book = address_book
         self.note_book = note_book
+        self.sorter = FileSorter() # обьєкт сорьувальник
 
     @staticmethod
     def hello():
@@ -269,6 +272,10 @@ class ContactBot:
                 self.address_book.save_to_json()
                 self.note_book.save_to_json()
                 return exit_bot()
+            elif user_input.startswith("sort_files"):
+                folder_path = user_input_original[len("sort_files") + 1:].strip()
+                self.sorter.go(folder_path)
+                return "Files sorted successfully."
             elif user_input.startswith("add_birthday"):
                 data = user_input_original[len("add_birthday") + 1 :]
                 return self.add_birthday(data)
@@ -368,6 +375,11 @@ def main():
 
 def exit_bot() -> None:
     print("Good bye!")
+    sys.exit()
+
+
+if __name__ == "__main__":
+    main()
     sys.exit()
 
 
