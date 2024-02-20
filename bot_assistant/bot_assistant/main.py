@@ -285,20 +285,23 @@ class ContactBot:
             ):  # додає телефон до списку телефонів контакту. Як працюєЖ пишемо add_phone name
                 data = user_input_original[len("add_phone") + 1 :]
                 return self.add_phone(data)
+            
             elif user_input.startswith("add_note"):  # + Додає нотатку до нотатника.
                 if len(user_input.split()) > 1:
                     return "Invalid command format. Usage: add_note"
                 else:
                     return self.add_note()
+                
             elif user_input.startswith(
                 "search_note"
             ):  # + Шукає нотатки за певними ключовими словами і сортує від новішого до старішого до даті.
-                search_query = user_input[
-                    len("search_note") :
-                ].strip()  # Отримуємо пошуковий запит, видаляючи команду та пробіли на початку та в кінці
-                found_notes = note_book.search_note(search_query)
-                for note in found_notes:
-                    return note  # Виводимо інформацію про кожну знайдену нотатку
+                search_query = user_input[len("search_note"):].strip()  # Отримуємо пошуковий запит, видаляючи команду та пробіли на початку та в кінці
+                if len(search_query) < 1:
+                    print('Invalid command format.')
+                else:
+                    found_notes = NoteBook.search_note(self, search_query)
+                    for note in found_notes:
+                        return note  # Виводимо інформацію про кожну знайдену нотатку  
             elif user_input.startswith(
                 "edit_note"
             ):  # + Редагує існуючу нотатку. edit_note "назва рецепту" "новий зміст рецепту"
