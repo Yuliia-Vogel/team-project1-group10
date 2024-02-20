@@ -1,18 +1,17 @@
 import sys
-from .contacts import AddressBook, Record, Name, Phone, Birthday, Email
-from .notebook import Note, NoteBook
+from bot_assistant.contacts import AddressBook, Record, Name, Phone, Birthday, Email
+from bot_assistant.notebook import Note, NoteBook
 from datetime import datetime
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
-from .file_sorter import FileSorter
+from bot_assistant.file_sorter import FileSorter
 
 
 class SingleUseCompleter(Completer):
     def __init__(self, words):
         self.words = words
         self.used = False  # Флаг, указывающий на то, использовались ли подсказки
-
 
     def get_completions(self, document: Document, complete_event):
         # Проверяем, были ли уже использованы подсказки
@@ -375,11 +374,6 @@ def main():
 
 def exit_bot() -> None:
     print("Good bye!")
-    sys.exit()
-
-
-if __name__ == "__main__":
-    main()
     sys.exit()
 
 
