@@ -286,7 +286,10 @@ class ContactBot:
                 data = user_input_original[len("add_phone") + 1 :]
                 return self.add_phone(data)
             elif user_input.startswith("add_note"):  # + Додає нотатку до нотатника.
-                return self.add_note()
+                if len(user_input.split()) > 1:
+                    return "Invalid command format. Usage: add_note"
+                else:
+                    return self.add_note()
             elif user_input.startswith(
                 "search_note"
             ):  # + Шукає нотатки за певними ключовими словами і сортує від новішого до старішого до даті.
@@ -321,11 +324,20 @@ class ContactBot:
                 else:
                     return "Note not found."
             elif user_input.startswith("show_note"):  # + Виводить список всіх нотаток.
-                return self.show_note()
-            elif user_input.startswith("help"):  # + Виводить список доступних всех команд.
-                return self.help()            
+                if len(user_input.split()) > 1:
+                    return "Invalid command format. Usage: show_note"
+                else:
+                    return self.show_note()
             elif user_input.startswith("help_note"):  # + Виводить список доступних команд для нотатника.
-                return self.help_note()
+                if len(user_input.split()) > 1:
+                    return "Invalid command format. Usage: help_note"
+                else:
+                    return self.help_note()
+            elif user_input.startswith("help"):  # + Виводить список доступних всех команд.
+                if len(user_input.split()) > 1:
+                    return "Invalid command format. Usage: help"
+                else:
+                    return self.help()            
             elif user_input.startswith("change_contact_phone"):
                 data = user_input_original[len("change_contact_phone") + 1 :]
                 return self.change_contact_phone(data)
@@ -341,6 +353,7 @@ class ContactBot:
                 return self.search_by_bd()
             else:
                 return "Invalid command. Try again."
+            
 
 
 def exit_bot() -> None:
