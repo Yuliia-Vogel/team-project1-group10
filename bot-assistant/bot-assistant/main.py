@@ -5,6 +5,8 @@ from datetime import datetime
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
+from pathlib import Path
+from file_sorter import main as sorting
 
 
 class SingleUseCompleter(Completer):
@@ -221,12 +223,11 @@ class ContactBot:
             "delete_contact": "<name>: Deletes a contact.",
             "search_contacts": "<name or phone>: Searches contacts by name or phone.",
         }
-  
+
         max_command_length = max(len(command) for command in commands_help.keys())
-        formatted_help = [f"{command.ljust(max_command_length)} : {description}" for command, description in commands_help.items()]
-        # Выводим отформатированный список команд
-        for line in formatted_help:
-            return "\n".join([f"{cmd}: {desc}" for cmd, desc in commands_help.items()])
+
+        for command, description in commands_help.items():
+            print(f"{command.ljust(max_command_length)} : {description}")
 
     def help_note(self):
         commands = {
@@ -241,7 +242,7 @@ class ContactBot:
 
     # Видалення контакту
     def delete_contact(self, name):
-        try: 
+        try:
             self.address_book.delete(name)
             return f"Contact {name} deletetion fuction finished"
         except ValueError:
@@ -259,6 +260,7 @@ class ContactBot:
             return "\n".join(str(record) for record in found_records)
         else:
             return f"No contacts found matching '{name}'"
+
 
     def main(self):
         while True:
@@ -322,9 +324,13 @@ class ContactBot:
                     return "Note not found."
             elif user_input.startswith("show_note"):  # + Виводить список всіх нотаток.
                 return self.show_note()
-            elif user_input.startswith("help"):  # + Виводить список доступних всех команд.
-                return self.help()            
-            elif user_input.startswith("help_note"):  # + Виводить список доступних команд для нотатника.
+            elif user_input.startswith(
+                "help"
+            ):  # + Виводить список доступних всех команд.
+                return self.help()
+            elif user_input.startswith(
+                "help_note"
+            ):  # + Виводить список доступних команд для нотатника.
                 return self.help_note()
             elif user_input.startswith("change_contact_phone"):
                 data = user_input_original[len("change_contact_phone") + 1 :]
@@ -353,5 +359,9 @@ if __name__ == "__main__":
     address_book = AddressBook("address_book.json")
     note_book = NoteBook("notes.json")
     bot = ContactBot(address_book, note_book)
+    if len(sys.argv) > 1:
+        bot.sorter(sys.argv[1])
+    else:
+        print("Usage: main.py <path_to_sort>")
     while True:
         print(bot.main())
