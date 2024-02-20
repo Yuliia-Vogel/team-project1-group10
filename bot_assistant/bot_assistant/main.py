@@ -1,6 +1,6 @@
 import sys
-from contacts import AddressBook, Record, Name, Phone, Birthday, Email
-from notebook import Note, NoteBook
+from .contacts import AddressBook, Record, Name, Phone, Birthday, Email
+from .notebook import Note, NoteBook
 from datetime import datetime
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
@@ -260,7 +260,7 @@ class ContactBot:
         else:
             return f"No contacts found matching '{name}'"
 
-    def main(self):
+    def main_in_bot(self):
         while True:
             command_completer.reset()
             user_input_original = session.prompt("Enter command:  ")
@@ -354,6 +354,13 @@ class ContactBot:
             else:
                 return "Invalid command. Try again."
             
+def main():
+    print("Hello my name is Otto. How can I help you?")
+    address_book = AddressBook("address_book.json")
+    note_book = NoteBook("notes.json")
+    bot = ContactBot(address_book, note_book)
+    while True:
+        print(bot.main_in_bot())
 
 
 def exit_bot() -> None:
@@ -362,9 +369,4 @@ def exit_bot() -> None:
 
 
 if __name__ == "__main__":
-    print("Hello my name is Otto. How can I help you?")
-    address_book = AddressBook("address_book.json")
-    note_book = NoteBook("notes.json")
-    bot = ContactBot(address_book, note_book)
-    while True:
-        print(bot.main())
+    main()
