@@ -13,7 +13,6 @@ class SingleUseCompleter(Completer):
         self.words = words
         self.used = False  # Флаг, указывающий на то, использовались ли подсказки
 
-
     def get_completions(self, document: Document, complete_event):
         # Проверяем, были ли уже использованы подсказки
         if not self.used:
