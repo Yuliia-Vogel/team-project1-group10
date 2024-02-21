@@ -185,11 +185,6 @@ class ContactBot:
         self.note_book.add_note(new_note)  # Додавання нової нотатки до нотатника
         return "Note added"
 
-    # def search_note(self, keyword):
-    #     print('this')
-    #     return [note for note in self.notes if keyword.lower() in note.content.lower()]
-
-
     def edit_note(
         self, note_title, new_content
     ):  # Пошук та редагування нотатки за назвою
