@@ -185,9 +185,6 @@ class ContactBot:
         self.note_book.add_note(new_note)  # Додавання нової нотатки до нотатника
         return "Note added"
 
-    def search_note(self, keyword):
-        return [note for note in self.notes if keyword.lower() in note.content.lower()]
-
     def edit_note(
         self, note_title, new_content
     ):  # Пошук та редагування нотатки за назвою
@@ -306,7 +303,7 @@ class ContactBot:
                 if len(search_query) < 1:
                     print('Invalid command format.')
                 else:
-                    found_notes = NoteBook.search_note(self, search_query)
+                    found_notes = self.note_book.search_note(search_query)
                     for note in found_notes:
                         return note  # Виводимо інформацію про кожну знайдену нотатку  
             elif user_input.startswith(
