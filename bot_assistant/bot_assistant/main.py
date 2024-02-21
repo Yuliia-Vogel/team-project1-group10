@@ -1,11 +1,11 @@
 import sys
 from bot_assistant.contacts import AddressBook, Record, Name, Phone, Birthday, Email
 from bot_assistant.notebook import Note, NoteBook
+from bot_assistant.file_sorter import FileSorter
 from datetime import datetime
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
-from bot_assistant.file_sorter import FileSorter
 
 
 class SingleUseCompleter(Completer):
@@ -46,6 +46,7 @@ COMMANDS = [
     "help_note",
     "delete_contact",
     "search_contacts",
+    "sort_files"
 ]
 command_completer = SingleUseCompleter(COMMANDS)
 

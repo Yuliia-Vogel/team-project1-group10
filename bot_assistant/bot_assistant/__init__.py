@@ -1,1 +1,1 @@
-__all__ = ["main", "contacts", "notebook"]
+__all__ = ["main", "contacts", "notebook", "file_sorter"]
