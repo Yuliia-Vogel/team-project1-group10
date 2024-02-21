@@ -12,7 +12,7 @@ setup(name='bot_assistant',
       include_package_data=True,
       entry_points = {
           'console_scripts': [
-              'bot_assistant = bot_assistant.main:main'
+              'otto = bot_assistant.main:main'
           ]
       }
       )
