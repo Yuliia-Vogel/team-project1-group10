@@ -36,17 +36,15 @@ class NoteBook(UserList):
 
     def search_note(self, search_query):
         search_terms = search_query.lower().split()  # Розбиваємо пошуковий запит на слова
-        found_notes = []
-
-        for note in self.data:
-            # Перевіряємо, чи пошукові слова зустрічаються в назві, тексті або тегах нотатки
-            if any(term in note.title.lower() or term in note.text.lower() or term in ' '.join(note.tags).lower() for term in search_terms):
-                found_notes.append(note)
-
-        # Сортуємо знайдені нотатки за датою створення від найновіших до найстаріших
-        found_notes.sort(key=lambda note: note.creation_date, reverse=True)
-
-        return found_notes
+        found_notes = [
+            note
+            for note in self.data
+            if any(term in note.title.lower() or term in note.text.lower() or term in ' '.join(note.tags).lower() for term in search_terms)
+    ]
+        if found_notes:
+            return "\n".join(str(note) for note in found_notes)
+        else:
+            return "No notes found matching '{search_query}'"
 
     def load_from_json(self):
         try:
