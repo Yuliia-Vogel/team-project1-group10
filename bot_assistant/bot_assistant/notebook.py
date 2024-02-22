@@ -29,7 +29,7 @@ class NoteBook(UserList):
 
     def remove_note_by_title(self, title):
         for i, note in enumerate(self.data):
-            if note.title == title:
+            if note.title.lower() == title:
                 del self.data[i]
                 return True
         return False
