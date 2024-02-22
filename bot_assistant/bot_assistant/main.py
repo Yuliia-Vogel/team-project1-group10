@@ -270,9 +270,12 @@ class ContactBot:
                 self.note_book.save_to_json()
                 return exit_bot()
             elif user_input.startswith("sort_files"):
-                folder_path = user_input_original[len("sort_files") + 1:].strip()
-                self.sorter.go(folder_path)
-                return "Files sorted successfully."
+                if len(user_input.split()) == 1:
+                    return "Please provide the path to the folder you want to sort."
+                else:
+                    folder_path = user_input_original[len("sort_files") + 1:].strip()
+                    self.sorter.go(folder_path)
+                    return "Files sorted successfully."
             elif user_input.startswith("add_birthday"):
                 data = user_input_original[len("add_birthday") + 1 :]
                 return self.add_birthday(data)
