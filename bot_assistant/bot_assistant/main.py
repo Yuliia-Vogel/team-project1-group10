@@ -201,6 +201,19 @@ class ContactBot:
             return "\n".join(str(note) for note in self.note_book.data)
 
     # надання користувачу довідки щодо доступних команд для роботи з нотатками
+    def search_note(self, search_query):
+        search_terms = search_query.lower().split()  # Розбиваємо пошуковий запит на слова
+        found_notes = [
+            note
+            for note in self.note_book.data
+            if any(term in note.title.lower() or term in note.text.lower() or term in ' '.join(note.tags).lower() for term in search_terms)
+        ]
+        if found_notes:
+            return "\n".join(str(note) for note in found_notes)
+        else:
+            return "No notes found matching '{search_query}'"
+        
+        # надання користувачу довідки щодо доступних команд для роботи з нотатками
 
     def help(self):
         commands_help = {
@@ -220,6 +233,7 @@ class ContactBot:
             "help_note": "Displays help message for note commands.",
             "delete_contact": "<name>: Deletes a contact.",
             "search_contacts": "<name or phone>: Searches contacts by name or phone.",
+            "sort_files": "<Path to the folder you want to sort>: Files sorted successfully.",
         }
   
         max_command_length = max(len(command) for command in commands_help.keys())
@@ -299,16 +313,9 @@ class ContactBot:
                 else:
                     return self.add_note()
                 
-            elif user_input.startswith(
-                "search_note"
-            ):  # + Шукає нотатки за певними ключовими словами і сортує від новішого до старішого до даті.
-                search_query = user_input[len("search_note"):].strip()  # Отримуємо пошуковий запит, видаляючи команду та пробіли на початку та в кінці
-                if len(search_query) < 1:
-                    print('Invalid command format.')
-                else:
-                    found_notes = self.note_book.search_note(search_query)
-                    for note in found_notes:
-                        return note  # Виводимо інформацію про кожну знайдену нотатку  
+            elif user_input.startswith("search_note"):
+                search_query = user_input_original[len("search_note") + 1:].strip()  # Виправлено
+                return self.search_note(search_query)  # Виправлено
             elif user_input.startswith(
                 "edit_note"
             ):  # + Редагує існуючу нотатку. edit_note "назва рецепту" "новий зміст рецепту"
