@@ -212,7 +212,7 @@ class ContactBot:
             return "\n".join(str(note) for note in found_notes)
         else:
             return "No notes found matching '{search_query}'"
-        
+
         # надання користувачу довідки щодо доступних команд для роботи з нотатками
 
     def help(self):
@@ -235,7 +235,7 @@ class ContactBot:
             "search_contacts": "<name or phone>: Searches contacts by name or phone.",
             "sort_files": "<Path to the folder you want to sort>: Files sorted successfully.",
         }
-  
+
         max_command_length = max(len(command) for command in commands_help.keys())
         formatted_help = [f"{command.ljust(max_command_length)} : {description}" for command, description in commands_help.items()]
         # Выводим отформатированный список команд
@@ -300,25 +300,27 @@ class ContactBot:
                 return self.hello()
             elif user_input.startswith("add_contact"):
                 data = user_input_original[len("add_contact") + 1 :]
+                for record in self.address_book.data.values():
+                    contact_info = f"{', '.join(record.phones)}"
+                    if contact_info[-10:] == data[-10:] or contact_info[-22:-12] == data[-10:]:
+                        return "The phone number you entered already exists"  # Введений вами номер телефону вже існує
                 return self.add_contact(data)
-            elif user_input.startswith(
-                "add_phone"
-            ):  # додає телефон до списку телефонів контакту. Як працюєЖ пишемо add_phone name
+            elif user_input.startswith("add_phone"):  # додає телефон до списку телефонів контакту. Як працюєЖ пишемо add_phone name
                 data = user_input_original[len("add_phone") + 1 :]
+                for record in self.address_book.data.values():
+                    contact_info = f"{', '.join(record.phones)}"
+                    if contact_info[-10:] == data[-10:] or contact_info[-22:-12] == data[-10:]:
+                        return "The phone number you entered already exists"  # Введений вами номер телефону вже існує
                 return self.add_phone(data)
-            
             elif user_input.startswith("add_note"):  # + Додає нотатку до нотатника.
                 if len(user_input.split()) > 1:
                     return "Invalid command format. Usage: add_note"
                 else:
                     return self.add_note()
-                
             elif user_input.startswith("search_note"):
-                search_query = user_input_original[len("search_note") + 1:].strip()  # Виправлено
-                return self.search_note(search_query)  # Виправлено
-            elif user_input.startswith(
-                "edit_note"
-            ):  # + Редагує існуючу нотатку. edit_note "назва рецепту" "новий зміст рецепту"
+                search_query = user_input_original[len("search_note") + 1:].strip()
+                return self.search_note(search_query)
+            elif user_input.startswith("edit_note"):  # + Редагує існуючу нотатку. edit_note "назва рецепту" "новий зміст рецепту"
                 command, *args = (
                     user_input.split()
                 )  # Розділяємо введену команду на частини
@@ -370,7 +372,8 @@ class ContactBot:
                 return self.search_by_bd()
             else:
                 return "Invalid command. Try again."
-            
+
+
 def main():
     print("Hello my name is Otto. How can I help you?")
     address_book = AddressBook("address_book.json")

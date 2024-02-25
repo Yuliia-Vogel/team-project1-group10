@@ -56,13 +56,14 @@ class Birthday(Field):
                 raise ValueError
             else:
                 return True
+
     def value_as_datetime(self):
         if self.value:
             if self.value.lower() == 'none':
                 return None
             return datetime.strptime(self.value, '%Y-%m-%d')
         return None
-    
+
 
 class Email(Field):
 
@@ -77,6 +78,7 @@ class Email(Field):
             if re.match(email_regex, value):
                 return True
         return False
+
 
 class Record:
     def __init__(self, name, birthday=None, email=None):
@@ -178,4 +180,3 @@ class AddressBook(UserDict):
                         self.add_record(record)
         except FileNotFoundError:
             return "File not found. Creating a new address book."
-
