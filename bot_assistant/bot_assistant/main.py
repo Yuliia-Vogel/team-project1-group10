@@ -148,7 +148,7 @@ class ContactBot:
                 )
                 if next_birthday.date() == today.date():
                     print("*"*35)
-                    print(f"BD of {contact.name.value} is today!!! {contact.birthday.value}")
+                    print(f"Today is BD of {contact.name.value}!!! {contact.birthday.value}")
                     print("*"*35)
 
                 elif next_birthday.date() < today.date():
@@ -165,7 +165,7 @@ class ContactBot:
         else:
             result = ""
             for contact, days_left in upcoming_birthday_contacts:
-                result += f"Contact: {contact.name.value.capitalize()}, Days until birthday: {days_left} ({contact.birthday})\n"  # Змінено
+                result += f"Contact: {contact.name.value}, Days until birthday: {days_left} ({contact.birthday})\n"  # Змінено
             return result
 
     # додавання дня народження контакту
@@ -400,10 +400,13 @@ class ContactBot:
 
 
 def main():
-    print("Hello my name is Otto. How can I help you?")
+    
     address_book = AddressBook("address_book.json")
     note_book = NoteBook("notes.json")
     bot = ContactBot(address_book, note_book)
+    print(bot.search_by_bd())
+    print("-"*50)
+    print("Hello my name is Otto. How can I help you?")
     while True:
         print(bot.main_in_bot())
 
