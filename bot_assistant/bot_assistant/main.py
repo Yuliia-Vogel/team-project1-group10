@@ -11,23 +11,23 @@ from prompt_toolkit.document import Document
 class SingleUseCompleter(Completer):
     def __init__(self, words):
         self.words = words
-        self.used = False  # Флаг, указывающий на то, использовались ли подсказки
+        self.used = False  # Вказівник на те, чи виконувались уже підказки
 
     def get_completions(self, document: Document, complete_event):
-        # Проверяем, были ли уже использованы подсказки
+        # Перевіряємо, чи вже були використані підказки
         if not self.used:
             text = document.text_before_cursor
             for word in self.words:
                 if word.startswith(text):
                     yield Completion(word, start_position=-len(text))
-            self.used = True  # Помечаем подсказки как использованные
+            self.used = True  # Позначаємо підказки як використані
 
     def reset(self):
-        # Сброс флага для следующего ввода
+        # Скидання вказівника для наступного разу
         self.used = False
 
 
-# Список команд для автодополнения
+# Список команд для автодоповнення
 COMMANDS = [
     "help",
     "exit",
@@ -51,7 +51,7 @@ COMMANDS = [
 ]
 command_completer = SingleUseCompleter(COMMANDS)
 
-# Создание сессии с автодополнением
+# Створення сессії з автодоповненнями
 session = PromptSession(completer=command_completer)
 
 
@@ -59,7 +59,7 @@ class ContactBot:
     def __init__(self, address_book, note_book):
         self.address_book = address_book
         self.note_book = note_book
-        self.sorter = FileSorter() # обьєкт сорьувальник
+        self.sorter = FileSorter() # об'єкт сортувальник
 
     @staticmethod
     def hello():
@@ -146,13 +146,18 @@ class ContactBot:
                     contact.birthday.value_as_datetime().month,
                     contact.birthday.value_as_datetime().day,
                 )
-                if next_birthday < today:
+                if next_birthday.date() == today.date():
+                    print("*"*35)
+                    print(f"BD of {contact.name.value} is today!!! {contact.birthday.value}")
+                    print("*"*35)
+
+                elif next_birthday.date() < today.date():
                     next_birthday = datetime(
                         today.year + 1,
                         contact.birthday.value_as_datetime().month,
                         contact.birthday.value_as_datetime().day,
                     )
-                days_to_birthday = (next_birthday - today).days
+                days_to_birthday = (next_birthday.date() - today.date()).days
                 if 0 <= days_to_birthday <= 14:
                     upcoming_birthday_contacts.append((contact, days_to_birthday))
         if not upcoming_birthday_contacts:
