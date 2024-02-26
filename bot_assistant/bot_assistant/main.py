@@ -33,6 +33,7 @@ COMMANDS = [
     "exit",
     "add_contact",
     "change_contact_phone",
+    "change_contact_name",
     "show_all_contacts",
     "search_by_bd",
     "add_birthday",
@@ -88,6 +89,20 @@ class ContactBot:
                 return "Contact not found"
         except ValueError:
             return "Invalid data format. Please provide both name and phone."
+        
+    # зміна імені контакту
+    def change_contact_name(self, data):
+        try:
+            old_name, new_name = data.split(", ")
+            if old_name in self.address_book:
+                record = self.address_book.find(old_name)
+                record.name = Name(new_name)
+                self.address_book.data[new_name] = self.address_book.data.pop(old_name)
+                return f"Name updated successfully for {old_name} to {new_name}"
+            else:
+                return "Contact not found"
+        except ValueError:
+            return "Invalid data format. Please provide both old name and new name."
 
     def add_phone(self, data):
         try:
@@ -220,6 +235,7 @@ class ContactBot:
             "hello": "Displays a greeting message and offers assistance.",
             "add_contact": "<name> <phone>: Adds a new contact.",
             "change_contact_phone": "<name> <new phone>: Updates the phone number of a contact.",
+            "change_contact_name": "<old name>, <new name>: Updates the name of a contact", 
             "add_phone": "<name> <phone>: Adds an additional phone number to an existing contact.",
             "show_all_contacts": "Displays all contacts.",
             "search_by_bd": "Searches for contacts whose birthday is within the next 14 days.",
@@ -277,6 +293,7 @@ class ContactBot:
     def main_in_bot(self):
         while True:
             command_completer.reset()
+            print('-'*50) 
             user_input_original = session.prompt("Enter command:  ")
             user_input = user_input_original.lower()
             if user_input in ["good bye", "close", "exit", "."]:
@@ -360,6 +377,9 @@ class ContactBot:
             elif user_input.startswith("change_contact_phone"):
                 data = user_input_original[len("change_contact_phone") + 1 :]
                 return self.change_contact_phone(data)
+            elif user_input.startswith("change_contact_name"): 
+                data = user_input_original[len("change_contact_name") + 1 :]
+                return self.change_contact_name(data)
             elif user_input == "show_all_contacts":
                 return self.show_all_contacts()
             elif user_input.startswith("delete_contact"):
