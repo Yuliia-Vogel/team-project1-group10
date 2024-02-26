@@ -3,6 +3,7 @@ import re
 import shutil
 from pathlib import Path
 
+
 class FileSorter:
     JPEG_IMAGES = []
     PNG_IMAGES = []
@@ -27,7 +28,7 @@ class FileSorter:
     GZ_ARCHIVES = []
     TAR_ARCHIVES = []
     MY_OTHER = []
-  
+
     REGISTER_EXTENSION = {
         'JPEG': JPEG_IMAGES,
         'PNG': PNG_IMAGES,
@@ -179,9 +180,11 @@ class FileSorter:
         for file in self.MY_OTHER:
             self.handle_other(file, folder / 'MY_OTHER')
 
+
 def exit_bot() -> None:
     print("Good bye!")
     sys.exit()
+
 
 if __name__ == "__main__":
     print("Hello my name is Otto. How can I help you?")

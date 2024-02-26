@@ -40,7 +40,7 @@ class NoteBook(UserList):
             note
             for note in self.data
             if any(term in note.title.lower() or term in note.text.lower() or term in ' '.join(note.tags).lower() for term in search_terms)
-    ]
+        ]
         if found_notes:
             return "\n".join(str(note) for note in found_notes)
         else:
