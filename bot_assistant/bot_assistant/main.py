@@ -3,28 +3,29 @@ from bot_assistant.contacts import AddressBook, Record, Name, Phone, Birthday, E
 from bot_assistant.notebook import Note, NoteBook
 from bot_assistant.file_sorter import FileSorter
 from datetime import datetime
+from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit.document import Document
+#from prompt_toolkit.completion import Completer, Completion
+#from prompt_toolkit.document import Document
 
 
-class SingleUseCompleter(Completer):
-    def __init__(self, words):
-        self.words = words
-        self.used = False  # Вказівник на те, чи виконувались уже підказки
+#class SingleUseCompleter(Completer):
+    #def __init__(self, words):
+      #  self.words = words
+      #  self.used = False  # Вказівник на те, чи виконувались уже підказки
 
-    def get_completions(self, document: Document, complete_event):
+    #def get_completions(self, document: Document, complete_event):
         # Перевіряємо, чи вже були використані підказки
-        if not self.used:
-            text = document.text_before_cursor
-            for word in self.words:
-                if word.startswith(text):
-                    yield Completion(word, start_position=-len(text))
-            self.used = True  # Позначаємо підказки як використані
+       # if not self.used:
+          #  text = document.text_before_cursor
+           # for word in self.words:
+            #    if word.startswith(text):
+              #      yield Completion(word, start_position=-len(text))
+           # self.used = True  # Позначаємо підказки як використані
 
-    def reset(self):
+   # def reset(self):
         # Скидання вказівника для наступного разу
-        self.used = False
+       # self.used = False
 
 
 # Список команд для автодоповнення
@@ -49,7 +50,8 @@ COMMANDS = [
     "search_contacts",
     "sort_files"
 ]
-command_completer = SingleUseCompleter(COMMANDS)
+#command_completer = SingleUseCompleter(COMMANDS)
+command_completer = WordCompleter(COMMANDS)
 
 # Створення сессії з автодоповненнями
 session = PromptSession(completer=command_completer)
@@ -297,7 +299,7 @@ class ContactBot:
 
     def main_in_bot(self):
         while True:
-            command_completer.reset()
+            command_completer = WordCompleter(COMMANDS)
             print('-'*50) 
             user_input_original = session.prompt("Enter command:  ")
             user_input = user_input_original.lower()
