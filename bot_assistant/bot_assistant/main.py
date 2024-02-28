@@ -301,8 +301,8 @@ class ContactBot:
         while True:
             command_completer = WordCompleter(COMMANDS)
             print('-'*50) 
-            user_input_original = session.prompt("Enter command:  ")
-            user_input = user_input_original.lower()
+            user_input_original = session.prompt("Enter command:  ") # зберігаємо оригінальний ввід від користувача з усіма великими і малими літерами
+            user_input = user_input_original.lower() # робимо lowercase для того, щоб в будь-якому разі виокремити команду
             if user_input in ["good bye", "close", "exit", "."]:
                 self.address_book.save_to_json()
                 self.note_book.save_to_json()
@@ -346,7 +346,7 @@ class ContactBot:
                 return self.search_note(search_query)
             elif user_input.startswith("edit_note"):  # + Редагує існуючу нотатку. edit_note "назва рецепту" "новий зміст рецепту"
                 command, *args = (
-                    user_input.split()
+                    user_input_original.split()
                 )  # Розділяємо введену команду на частини
                 if (
                     len(args) >= 2
@@ -358,9 +358,9 @@ class ContactBot:
                     return self.edit_note(note_id, new_content)
                 else:
                     return "Please, provide both an ID and new content for the note."
-            elif user_input.startswith("remove_note"):  # + Видаляє нотаток.
+            elif user_input.startswith("remove_note"):  # + Видаляє нотатку.
                 note_title = user_input[
-                    11:
+                    len("remove_note")+1:
                 ].strip()  # Витягуємо назву нотатки і видаляємо зайві пробіли
                 if self.note_book.remove_note_by_title(note_title):
                     return "Note removed successfully."
