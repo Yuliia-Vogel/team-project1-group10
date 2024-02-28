@@ -1,32 +1,20 @@
 import sys
+import time
 from bot_assistant.contacts import AddressBook, Record, Name, Phone, Birthday, Email
 from bot_assistant.notebook import Note, NoteBook
 from bot_assistant.file_sorter import FileSorter
 from datetime import datetime
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit import PromptSession
-#from prompt_toolkit.completion import Completer, Completion
-#from prompt_toolkit.document import Document
 
 
-#class SingleUseCompleter(Completer):
-    #def __init__(self, words):
-      #  self.words = words
-      #  self.used = False  # Вказівник на те, чи виконувались уже підказки
-
-    #def get_completions(self, document: Document, complete_event):
-        # Перевіряємо, чи вже були використані підказки
-       # if not self.used:
-          #  text = document.text_before_cursor
-           # for word in self.words:
-            #    if word.startswith(text):
-              #      yield Completion(word, start_position=-len(text))
-           # self.used = True  # Позначаємо підказки як використані
-
-   # def reset(self):
-        # Скидання вказівника для наступного разу
-       # self.used = False
-
+OTTO = r"""
+I am your personal bot-assistant named
+  __  ____  ____  __  
+ /  \(_  _)(_  _)/  \ 
+( () ) )(    )( ( () )
+ \__/ (__)  (__) \__/
+ """
 
 # Список команд для автодоповнення
 COMMANDS = [
@@ -50,7 +38,7 @@ COMMANDS = [
     "search_contacts",
     "sort_files"
 ]
-#command_completer = SingleUseCompleter(COMMANDS)
+
 command_completer = WordCompleter(COMMANDS)
 
 # Створення сессії з автодоповненнями
@@ -402,13 +390,17 @@ class ContactBot:
 
 
 def main():
-    
     address_book = AddressBook("address_book.json")
     note_book = NoteBook("notes.json")
     bot = ContactBot(address_book, note_book)
+    print(OTTO)
+    time.sleep(2)
     print(bot.search_by_bd())
+    time.sleep(2)
     print("-"*50)
+    time.sleep(1)
     print("Hello my name is Otto. How can I help you?")
+    time.sleep(1)
     while True:
         print(bot.main_in_bot())
 
